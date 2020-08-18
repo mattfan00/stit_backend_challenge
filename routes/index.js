@@ -1,5 +1,3 @@
-const { uniqueId } = require('../db.js')
-
 const express = require('express'),
       router = express.Router(),
       config = require('config'),
@@ -80,33 +78,48 @@ router.post('/get_businesses', (req, res) => {
     })
 })
 
-router.post('/reserve', (req, res) => {
-  let { id } = req.body
+router.post('/reserve', async (req, res) => {
+  try {
+    let currReservations = db.get('users')
+      .find({id: req.user.id})
+      .get('reservation_ids')
+      .value()
+    
+    console.log(currReservations)
 
-  if (!id) {
-    return res.status(400).json({
-      errorMessage: 'No restaurant ID was given'
+    if (currReservations.length >= 3) throw Error('Cannot make more than 3 reservations') 
+
+    let { id } = req.body
+    if (!id) throw Error('No restaurant ID was given')
+
+    let statuses = ['SUCCESS', 'FAILURE', 'PENDING']
+    let newReservation = {
+      id: uuid.v4(),
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      user_id: req.user.id,
+      business_id: id 
+    }
+
+    // add reservation to reservations list
+    db.get('reservations')
+      .push(newReservation)
+      .write()
+
+    if (newReservation.status == "SUCCESS") {
+      // add reservation ID to the users list
+      db.get('users')
+        .find({id: req.user.id})
+        .get('reservation_ids')
+        .push(newReservation.id)
+        .write()
+    }
+
+    res.json(newReservation)
+  } catch(e) {
+    res.status(400).json({
+      errorMessage: e.message
     })
   }
-
-  let newReservation = {
-    id: uuid.v4(),
-    status: 'PENDING',
-    user_id: req.user.id,
-    business_id: id 
-  }
-
-  db.get('users')
-    .find({id: req.user.id})
-    .get('reservation_ids')
-    .push(newReservation.id)
-    .write()
-
-  db.get('reservations')
-    .push(newReservation)
-    .write()
-
-  res.json(newReservation)
 })
 
 

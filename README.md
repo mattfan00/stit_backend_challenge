@@ -14,6 +14,15 @@ This is my submission for the STIT Backend Challenge.
       }
       ```
 
+1. This project uses lowdb for the database. Initialize the database by creating a file called `db.json` in the root directory and putting the following within the file:
+
+      ```js
+      {
+        "users": [],
+        "reservations": []
+      }
+      ```
+
 1. Use `node app.js` to start the server or `npm run dev` to start the server using `nodemon`
 
 ## Endpoints
@@ -26,6 +35,7 @@ Other:
 - `/unsetFavourite` - receives the ID of the restaurant you want to remove from your favorites and returns the list of all of your favorited restaurants 
 - `/get_businesses` - receives the location that you want to search for restaurants (if not specified then searches 'NYC') and returns a call from the Yelp API using that location
 - `/reserve` - receives the ID of the restaurant you want to make a reservation at and returns the details of that reservation
+    - Each reservation randomly gets assigned a status of "SUCCESS", "FAILURE", or "PENDING"
 
 **An important note** when sending requests to the endpoints listed in "Other" is to always send the JWT returned from the `/login` endpoint in the request header to indicate that the user is signed in. The required format for this is: `"Authorization": "Bearer your_jwt_token"`
 
