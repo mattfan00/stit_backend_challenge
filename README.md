@@ -37,6 +37,6 @@ Other:
 - `/reserve` - receives the ID of the restaurant you want to make a reservation at and returns the details of that reservation
     - Each reservation randomly gets assigned a status of "SUCCESS", "FAILURE", or "PENDING"
 
-**An important note** when sending requests to the endpoints listed in "Other" is to always send the JWT returned from the `/login` endpoint in the request header to indicate that the user is signed in. The required format for this is: `"Authorization": "Bearer your_jwt_token"`
+**An important note** when sending requests to the endpoints listed in "Other" is to always send the JWT returned from the `/login` endpoint in the request header to indicate that the user is signed in. The required format for this is: `"Authorization": "Bearer your_jwt_token"`. `middleware/auth.js` is used to check for authorization at all these endpoints.
 
 There is no `/logout` endpoint since the client side could choose not to send the JWT to indicate that the user is no longer signed in. 
